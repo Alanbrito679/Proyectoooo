@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% block title %}Lista de Estudiantes{% endblock %}
+
+{% block content %}
+
+<h1 class="page-title">Estudiantes por Curso y Paralelo</h1>
+
+<div class="student-filter-card">
+    <div class="filter-row">
+        <div>
+            <label>Curso:</label>
+            <select id="curso">
+                <option>1RO</option>
+                <option>2DO</option>
+                <option>3RO</option>
+                <option>4TO</option>
+                <option>5TO</option>
+                <option>6TO</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Paralelo:</label>
+            <select id="paralelo">
+                <option>A</option>
+                <option>B</option>
+                <option>C</option>
+                <option>D</option>
+                <option>E</option>
+            </select>
+        </div>
+
+        <button class="primary" onclick="buscar()">Buscar</button>
+    </div>
+</div>
+
+<div class="table-container">
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>CI</th>
+                <th>Nombre</th>
+                <th>Tutor</th>
+                <th>Teléfono</th>
+                <th>Estado Mes Actual</th>
+                <th>Reporte</th>
+            </tr>
+        </thead>
+        <tbody id="tabla_estudiantes"></tbody>
+    </table>
+</div>
+
+<style>
+.page-title {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 25px;
+    color: #003d73;
+}
+
+.student-filter-card {
+    width: 70%;
+    margin: auto;
+    background: #f9fafc;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.filter-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.filter-row select {
+    padding: 8px;
+    border: 1px solid #aaa;
+    border-radius: 6px;
+    width: 120px;
+}
+
+.table-container {
+    width: 90%;
+    margin: 30px auto;
+}
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.styled-table thead {
+    background: #003d73;
+    color: white;
+}
+
+.styled-table th, .styled-table td {
+    padding: 12px;
+    text-align: center;
+}
+
+.styled-table tbody tr:nth-child(even) {
+    background-color: #f5f7fa;
+}
+
+.styled-table tbody tr:hover {
+    background-color: #e6eef7;
+}
+
+.estado-pago {
+    font-weight: bold;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.pagado {
+    background: #c6f6c6;
+    color: #08780d;
+    border: 1px solid #70d470;
+}
+
+.no-pago {
+    background: #ffd4d4;
+    color: #8a0000;
+    border: 1px solid #ff8a8a;
+}
+
+.btn-pdf {
+    background: #1e90ff;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-pdf:hover {
+    background: #0b6ad8;
+}
+
+</style>
+
+<script>
+async function buscar() {
+    const curso = document.getElementById("curso").value;
+    const paralelo = document.getElementById("paralelo").value;
+
+    const res = await fetch(`/api/students?curso=${curso}&paralelo=${paralelo}`);
+    const data = await res.json();
+
+    const table = document.getElementById("tabla_estudiantes");
+    table.innerHTML = "";
+
+    data.forEach(s => {
+        table.innerHTML += `
+            <tr>
+                <td>${s.ci}</td>
+                <td>${s.first_name} ${s.last_name_p} ${s.last_name_m}</td>
+                <td>${s.padre_tutor}</td>
+                <td>${s.telefono}</td>
+                <td>
+                    <span class="estado-pago ${s.estado_mes_actual === 'PAGO' ? 'pagado' : 'no-pago'}">
+                        ${s.estado_mes_actual}
+                    </span>
+                </td>
+                <td>
+                    <button class="btn-pdf" onclick="descargarReporte('${s.ci}')">PDF</button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+function descargarReporte(ci){
+    const year = new Date().getFullYear();
+    window.open(`/report/student?ci=${ci}&year=${year}`, "_blank");
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Sistema Financiero{% endblock %}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        /* NAVBAR */
+        .navbar {
+            background: #0b1e39;
+            padding: 12px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+        }
+
+        .navbar img {
+            height: 45px;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            margin-left: 25px;
+            font-size: 15px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #1e90ff;
+        }
+
+        /* CONTENEDOR PRINCIPAL */
+        .main-container {
+            width: 100%;
+            max-width: 1100px;
+            margin: auto;
+            padding: 30px;
+            text-align: center;
+        }
+
+        /* TÍTULOS HERMOSOS */
+        h1, h2, h3 {
+            color: #0b1e39;
+        }
+    </style>
+</head>
+
+<body>
+
+{% if session.get("user") %}
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <div>
+            <img src="{{ url_for('static', filename='img/logo.png') }}">
+        </div>
+
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}">Inicio</a>
+            <a href="{{ url_for('students_page') }}">Estudiantes</a>
+            <a href="{{ url_for('register_payment_page') }}">Pagos</a>
+            <a href="{{ url_for('add_student_page') }}">Registrar Alumno</a>
+            <a href="{{ url_for('report_page') }}">Reportes</a>
+            <a href="{{ url_for('logout') }}" style="color: #ff4d4d">Salir</a>
+        </div>
+    </div>
+{% endif %}
+
+<!-- CONTENIDO DE CADA PÁGINA -->
+<div class="main-container">
+    {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>

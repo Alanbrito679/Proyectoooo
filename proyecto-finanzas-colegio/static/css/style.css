@@ -1,0 +1,300 @@
+/* =============================== */
+/* LOGIN BEAUTIFUL */
+/* =============================== */
+
+.login-body {
+    background: linear-gradient(135deg, #0b1e39, #092c53, #0d3a6b);
+    background-size: 300% 300%;
+    animation: gradient 12s ease infinite;
+    margin: 0;
+}
+
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-card {
+    background: rgba(255,255,255,0.15);
+    padding: 40px;
+    width: 350px;
+    border-radius: 20px;
+    color: white;
+    text-align: center;
+    backdrop-filter: blur(12px);
+}
+
+.login-logo {
+    width: 110px;
+    margin-bottom: 12px;
+}
+
+/* =============================== */
+/* DASHBOARD */
+/* =============================== */
+
+.dashboard-body {
+    background: #f2f6fa;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.navbar {
+    background: #0d3a6b;
+    padding: 12px 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.nav-logo {
+    width: 50px;
+    margin-right: 10px;
+}
+
+.nav-right a {
+    margin-left: 20px;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.nav-right a.logout {
+    color: #ffbaba;
+}
+
+.dashboard-logo {
+    width: 180px;
+    display: block;
+    margin: 20px auto;
+}
+
+.titulo-principal {
+    text-align: center;
+    color: #003d73;
+}
+
+.subtitulo {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    width: 70%;
+    margin: auto;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    text-align: center;
+}
+
+.card button {
+    padding: 10px;
+    width: 70%;
+    border-radius: 8px;
+    border: none;
+    background: #003d73;
+    color: white;
+    font-size: 16px;
+}
+
+/* CARD GENERAL */
+.payment-card {
+    max-width: 650px;
+    margin: auto;
+    background: white;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.15);
+}
+
+/* SECCIONES */
+.search-row {
+    display: flex;
+    gap: 10px;
+}
+
+.student-info {
+    margin-top: 20px;
+}
+
+.student-box {
+    background: #eef5ff;
+    padding: 15px;
+    border-radius: 10px;
+    border-left: 5px solid #004a99;
+}
+
+/* MESES */
+.months-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.month-item {
+    display: flex;
+    justify-content: space-between;
+    background: #f6f6f6;
+    padding: 12px;
+    border-radius: 8px;
+    align-items: center;
+    border-left: 4px solid #cccccc;
+}
+
+.month-item.paid {
+    background: #d4f5d0;
+    border-left: 4px solid #2ecc71;
+}
+
+.amount {
+    font-weight: bold;
+    color: #003b80;
+}
+
+.section-label {
+    margin-top: 20px;
+    font-weight: bold;
+    color: #003b80;
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
+/* ======== GENERAL RESET ======== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+/* ======== LOGIN FONDO ANIMADO ======== */
+.login-body {
+    background: linear-gradient(135deg, #003366, #0a2e52, #003366);
+    background-size: 400% 400%;
+    animation: gradientBG 12s ease infinite;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ======== LOGIN CARD GLASS EFFECT ======== */
+.login-card {
+    width: 380px;
+    background: rgba(255,255,255,0.15);
+    padding: 35px 40px;
+    border-radius: 18px;
+    backdrop-filter: blur(14px);
+    text-align: center;
+    box-shadow: 0 0 25px rgba(0,0,0,0.4);
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(25px); }
+    to { opacity: 1; transform: translateY(0px); }
+}
+
+/* ======== LOGO ======== */
+.login-logo {
+    width: 110px;
+    margin-bottom: 15px;
+}
+
+/* ======== TITULOS ======== */
+.login-title {
+    font-size: 26px;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.login-subtitle {
+    color: #e0e0e0;
+    font-size: 15px;
+    margin-bottom: 25px;
+}
+
+/* ======== FORM ======== */
+.login-card form {
+    text-align: left;
+}
+
+.login-card label {
+    color: #ffffff;
+    font-size: 14px;
+    margin-top: 10px;
+    display: block;
+}
+
+.login-card input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 4px;
+    border: none;
+    border-radius: 7px;
+    background: rgba(255,255,255,0.25);
+    color: white;
+    font-size: 15px;
+    outline: none;
+}
+
+/* ======== BOTÓN LOGIN ======== */
+.login-btn {
+    width: 100%;
+    margin-top: 18px;
+    padding: 12px;
+    background: #1e90ff;
+    border: none;
+    border-radius: 7px;
+    font-size: 16px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.login-btn:hover {
+    background: #1470d6;
+}
+
+/* ======== FOOTER ======== */
+.login-footer {
+    margin-top: 18px;
+    color: #dcdcdc;
+    font-size: 12px;
+}
+
+/* ======== ERROR ======== */
+.login-error {
+    background: rgba(255, 70, 70, 0.85);
+    padding: 8px;
+    color: white;
+    border-radius: 5px;
+    margin-bottom: 12px;
+    font-size: 13px;
+}

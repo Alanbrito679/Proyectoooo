@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% block title %}Reporte Anual{% endblock %}
+
+{% block content %}
+
+<h1 class="page-title">📊 Reporte Anual de Ingresos</h1>
+
+<div class="report-card">
+
+    <div class="year-selector">
+        <label for="year_select">Seleccionar Año</label>
+        <select id="year_select">
+            {% for y in range(2020, 2101) %}
+                <option value="{{ y }}" {% if y == now_year %}selected{% endif %}>{{ y }}</option>
+            {% endfor %}
+        </select>
+
+        <!-- NUEVO: selector de curso -->
+        <select id="curso_select">
+            <option value="">Todos los cursos</option>
+            <option>1RO</option>
+            <option>2DO</option>
+            <option>3RO</option>
+            <option>4TO</option>
+            <option>5TO</option>
+            <option>6TO</option>
+        </select>
+
+        <!-- NUEVO: selector de paralelo -->
+        <select id="paralelo_select">
+            <option value="">Todos</option>
+            <option>A</option>
+            <option>B</option>
+            <option>C</option>
+            <option>D</option>
+            <option>E</option>
+        </select>
+
+        <button class="btn-primary" onclick="cargarReporte()">Cargar Reporte</button>
+        <button class="btn-primary" onclick="descargarPDF()">Descargar PDF</button>
+    </div>
+
+    <hr class="divider">
+
+    <div class="total-box">
+        <h2>Total Recaudado</h2>
+        <p id="total_recaudado" class="total-amount">0 Bs</p>
+    </div>
+
+    <h2 class="section-title">📘 Ingresos por Curso y Paralelo</h2>
+    <table class="styled-table" id="table_paralelo">
+        <thead>
+            <tr>
+                <th>Curso / Paralelo</th>
+                <th>Total (Bs)</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2 class="section-title">📅 Ingresos por Mes</h2>
+    <table class="styled-table" id="table_mes">
+        <thead>
+            <tr>
+                <th>Mes</th>
+                <th>Total (Bs)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% set meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"] %}
+            {% for i in range(1,13) %}
+            <tr>
+                <td>{{ meses[i-1] }}</td>
+                <td id="m_{{ i }}">0 Bs</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+<style>
+/* (NO SE MODIFICÓ NADA DE TU ESTILO — TODO IGUAL) */
+.page-title {
+    font-size: 28px;
+    text-align: center;
+    margin-bottom: 25px;
+    color: #003366;
+    font-weight: bold;
+}
+.report-card {
+    background: white;
+    padding: 30px;
+    border-radius: 14px;
+    max-width: 1100px;
+    margin: auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+.year-selector {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+.year-selector label {
+    font-weight: bold;
+    font-size: 16px;
+}
+.year-selector select {
+    padding: 10px 15px;
+    border-radius: 6px;
+    border: 1px solid #aaa;
+    font-size: 16px;
+}
+.btn-primary {
+    background: #1e90ff;
+    padding: 10px 20px;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.btn-primary:hover {
+    background: #0b6ad8;
+}
+.divider {
+    margin: 30px 0;
+    border: none;
+    height: 1px;
+    background: #ccc;
+}
+.total-box { text-align: center; margin-bottom: 30px; }
+.total-amount { font-size: 28px; font-weight: bold; color: #008000; }
+.section-title { color: #003366; margin-top: 30px; margin-bottom: 8px; }
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    margin-bottom: 25px;
+    background: #fafafa;
+    border-radius: 10px;
+    overflow: hidden;
+    text-align: center;
+}
+.styled-table thead { background: #003366; color: white; }
+.styled-table th, .styled-table td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+.styled-table tr:hover { background: #e7f0ff; }
+.styled-table tbody tr:last-child td { border-bottom: none; }
+</style>
+
+<script>
+
+async function cargarReporte(){
+    const year = document.getElementById("year_select").value;
+
+    try {
+        const res = await fetch(`/api/report/annual?year=${year}`);
+        if(!res.ok) throw new Error("Error en servidor");
+        const data = await res.json();
+
+        document.getElementById("total_recaudado").innerText =
+            (data.total || 0) + " Bs";
+
+        const tbody = document.querySelector("#table_paralelo tbody");
+        tbody.innerHTML = "";
+
+        for(const k in data.detalle){
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td><b>${k}</b></td>
+                <td>${data.detalle[k]} Bs</td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        const por_mes = data.por_mes || {};
+        for(let i=1; i<=12; i++){
+            const val = por_mes[i] || 0;
+            document.getElementById("m_"+i).innerText = `${val} Bs`;
+        }
+
+    } catch (e) {
+        alert("Error al cargar el reporte.");
+        console.error(e);
+    }
+}
+
+/* ✔ NUEVO — evita el KeyError curso */
+function descargarPDF(){
+
+    const year = document.getElementById("year_select").value;
+    const curso = document.getElementById("curso_select").value;
+    const paralelo = document.getElementById("paralelo_select").value;
+
+    let url = `/report/pdf?year=${year}`;
+
+    if(curso !== "") url += `&curso=${curso}`;
+    if(paralelo !== "") url += `&paralelo=${paralelo}`;
+
+    window.open(url, "_blank");
+}
+
+</script>
+
+{% endblock %}

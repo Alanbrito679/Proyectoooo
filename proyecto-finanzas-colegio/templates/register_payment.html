@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block title %}Registrar Pago{% endblock %}
+
+{% block content %}
+
+<h1 class="page-title">Registrar Pago Mensual</h1>
+
+<div class="payment-card">
+
+    <!-- BUSCADOR -->
+    <div class="search-section">
+        <label>Buscar por CI:</label>
+        <div class="search-row">
+            <input id="ci_buscar" placeholder="Ingresa CI del estudiante">
+            <button class="primary" onclick="buscar()">Buscar</button>
+        </div>
+    </div>
+
+    <!-- DATOS DEL ESTUDIANTE -->
+    <div id="datos" class="student-info hidden"></div>
+
+    <!-- SELECCIÓN DE AÑO -->
+    <div id="anio_section" class="hidden">
+        <label class="section-label">Seleccionar Año:</label>
+        <select id="anio_select" onchange="cargarMesesPagados()"></select>
+    </div>
+
+    <!-- MESES -->
+    <div id="meses_section" class="hidden">
+        <h3 class="section-label">Meses disponibles:</h3>
+
+        <div id="meses" class="months-grid"></div>
+    </div>
+
+    <!-- BOTÓN GUARDAR -->
+    <div class="center">
+        <button class="primary" onclick="guardar()">Registrar Pago</button>
+    </div>
+
+    <p id="msg" class="message"></p>
+</div>
+
+
+<!-- ===========================================================
+     JAVASCRIPT AVANZADO Y OPTIMIZADO
+=========================================================== -->
+<script>
+
+let mesesPagados = [];
+let mesesSeleccionados = [];
+
+async function buscar() {
+    const ci = document.getElementById("ci_buscar").value.trim();
+    if (!ci) return;
+
+    const res = await fetch(`/api/get_student_by_ci?ci=${ci}`);
+    const data = await res.json();
+
+    if (data.error) {
+        document.getElementById("datos").innerHTML = "<p class='error'>No se encontró el estudiante.</p>";
+        document.getElementById("datos").classList.remove("hidden");
+        return;
+    }
+
+    document.getElementById("datos").classList.remove("hidden");
+    document.getElementById("datos").innerHTML = `
+        <div class="student-box">
+            <h3>${data.first_name} ${data.last_name_p} ${data.last_name_m}</h3>
+            <p><b>Curso:</b> ${data.curso} ${data.paralelo}</p>
+            <p><b>Tutor:</b> ${data.padre_tutor}</p>
+            <p><b>Teléfono:</b> ${data.telefono}</p>
+        </div>
+    `;
+
+    generarAnios(data.anio_inscripcion);
+}
+
+function generarAnios(inicio) {
+    const sel = document.getElementById("anio_select");
+    sel.innerHTML = "";
+
+    const max = inicio + 5;
+    for (let y = inicio; y <= max; y++) {
+        sel.innerHTML += `<option value="${y}">${y}</option>`;
+    }
+
+    document.getElementById("anio_section").classList.remove("hidden");
+    cargarMesesPagados();
+}
+
+async function cargarMesesPagados() {
+    const ci = document.getElementById("ci_buscar").value;
+    const year = document.getElementById("anio_select").value;
+
+    const res = await fetch(`/api/payments_by_year?ci=${ci}&year=${year}`);
+    const data = await res.json();
+
+    mesesPagados = data.meses_pagados || [];
+    mesesSeleccionados = [];
+
+    renderizarMeses();
+}
+
+function renderizarMeses() {
+    const cont = document.getElementById("meses");
+    cont.innerHTML = "";
+    document.getElementById("meses_section").classList.remove("hidden");
+
+    const meses = {
+        2:"Febrero",3:"Marzo",4:"Abril",5:"Mayo",6:"Junio",
+        7:"Julio",8:"Agosto",9:"Septiembre",10:"Octubre",11:"Noviembre",12:"Diciembre"
+    };
+
+    for (let m in meses) {
+        m = parseInt(m);
+        const pagado = mesesPagados.includes(m);
+
+        cont.innerHTML += `
+            <div class="month-item ${pagado ? "paid" : ""}">
+                <span>${meses[m]}</span>
+                <span class="amount">500 Bs</span>
+
+                <input type="checkbox"
+                    value="${m}"
+                    ${pagado ? "checked disabled" : ""}
+                    onchange="actualizarSeleccion(${m}, this.checked)">
+            </div>
+        `;
+    }
+}
+
+function actualizarSeleccion(m, checked) {
+    if (checked) {
+        if (!mesesSeleccionados.includes(m)) mesesSeleccionados.push(m);
+    } else {
+        mesesSeleccionados = mesesSeleccionados.filter(x => x !== m);
+    }
+}
+
+async function guardar() {
+    const ci = document.getElementById("ci_buscar").value;
+    const year = document.getElementById("anio_select").value;
+
+    const res = await fetch("/api/register_payment", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({ ci, year, months: mesesSeleccionados })
+    });
+
+    const data = await res.json();
+    document.getElementById("msg").innerText = "Pagos registrados correctamente.";
+
+    await cargarMesesPagados();
+}
+
+</script>
+
+{% endblock %}

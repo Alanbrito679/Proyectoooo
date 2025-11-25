@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% block title %}Registrar Estudiante{% endblock %}
+
+{% block content %}
+
+<div class="form-wrapper">
+    <div class="form-card">
+
+        <h2 class="form-title">Registrar Nuevo Estudiante</h2>
+        <p class="form-subtitle">Completa los datos del estudiante para registrarlo en el sistema.</p>
+
+        <!-- Año automático -->
+        <label class="form-label">Año de Inscripción</label>
+        <input id="anio_inscripcion" type="number" class="form-input" readonly>
+
+        <label class="form-label">CI</label>
+        <input id="ci" class="form-input">
+
+        <label class="form-label">Nombre</label>
+        <input id="first" class="form-input">
+
+        <label class="form-label">Apellido Paterno</label>
+        <input id="ap_p" class="form-input">
+
+        <label class="form-label">Apellido Materno</label>
+        <input id="ap_m" class="form-input">
+
+        <label class="form-label">Padre/Tutor</label>
+        <input id="tutor" class="form-input">
+
+        <label class="form-label">Teléfono</label>
+        <input id="tel" class="form-input">
+
+        <div class="form-row">
+            <div style="flex:1">
+                <label class="form-label">Curso</label>
+                <select id="curso" class="form-input">
+                    <option>1RO</option><option>2DO</option><option>3RO</option>
+                    <option>4TO</option><option>5TO</option><option>6TO</option>
+                </select>
+            </div>
+
+            <div style="flex:1">
+                <label class="form-label">Paralelo</label>
+                <select id="paralelo" class="form-input">
+                    <option>A</option><option>B</option><option>C</option><option>D</option><option>E</option>
+                </select>
+            </div>
+        </div>
+
+        <button class="btn-primary" onclick="registrar()">Registrar Estudiante</button>
+
+        <p id="msg" class="form-message"></p>
+    </div>
+</div>
+
+
+<script>
+// ===============================
+// Asignar año actual automáticamente
+// ===============================
+document.getElementById("anio_inscripcion").value = new Date().getFullYear();
+
+// ===============================
+// Registrar Estudiante
+// ===============================
+async function registrar() {
+    const body = {
+        ci: document.getElementById("ci").value.trim(),
+        first_name: document.getElementById("first").value.trim(),
+        last_name_p: document.getElementById("ap_p").value.trim(),
+        last_name_m: document.getElementById("ap_m").value.trim(),
+        padre_tutor: document.getElementById("tutor").value.trim(),
+        telefono: document.getElementById("tel").value.trim(),
+        curso: document.getElementById("curso").value,
+        paralelo: document.getElementById("paralelo").value,
+        anio_inscripcion: parseInt(document.getElementById("anio_inscripcion").value)
+    };
+
+    const res = await fetch("/api/add_student", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(body)
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+        document.getElementById("msg").innerText = "✔ " + data.msg;
+        document.getElementById("msg").style.color = "green";
+    } else {
+        document.getElementById("msg").innerText = "✘ Error: " + (data.error || "desconocido");
+        document.getElementById("msg").style.color = "red";
+    }
+}
+</script>
+
+<style>
+/* Contenedor centrado */
+.form-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+/* Tarjeta */
+.form-card {
+    background: white;
+    padding: 35px;
+    width: 450px;
+    border-radius: 14px;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+    animation: fadeIn 0.4s ease;
+}
+
+/* Títulos */
+.form-title {
+    text-align: center;
+    font-size: 22px;
+    color: #003d73;
+    margin-bottom: 5px;
+}
+
+.form-subtitle {
+    text-align: center;
+    color: #777;
+    margin-bottom: 20px;
+}
+
+/* Inputs */
+.form-label {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #c7c7c7;
+    margin-bottom: 12px;
+    transition: 0.2s;
+}
+
+.form-input:focus {
+    border-color: #003d73;
+    box-shadow: 0 0 6px rgba(0,61,115,0.4);
+}
+
+/* Fila para curso y paralelo */
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+
+/* Botón principal */
+.btn-primary {
+    width: 100%;
+    background: #003d73;
+    border: none;
+    padding: 12px;
+    color: white;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.2s;
+}
+
+.btn-primary:hover {
+    background: #0055a2;
+}
+
+/* Mensaje */
+.form-message {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 15px;
+}
+
+/* Animación */
+@keyframes fadeIn {
+    from { opacity:0; transform: translateY(10px); }
+    to { opacity:1; transform: translateY(0); }
+}
+</style>
+
+{% endblock %}

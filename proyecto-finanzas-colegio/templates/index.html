@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+
+<img src="{{ url_for('static', filename='img/logo.png') }}" class="dashboard-logo">
+
+<h1 class="titulo-principal">Bienvenido al Sistema Financiero</h1>
+<p class="subtitulo">Selecciona una de las opciones del menú superior para comenzar.</p>
+
+<div class="dashboard-cards">
+
+    <div class="card">
+        <h2>📚 Estudiantes</h2>
+        <p>Consultar pagos por curso y paralelo.</p>
+        <a href="/students"><button>Ir a Estudiantes</button></a>
+    </div>
+
+    <div class="card">
+        <h2>💳 Registrar Pago</h2>
+        <p>Registrar pagos mensuales.</p>
+        <a href="/register_payment"><button>Registrar Pago</button></a>
+    </div>
+
+    <div class="card">
+        <h2>➕ Registrar Alumno</h2>
+        <p>Añadir un nuevo estudiante.</p>
+        <a href="/add_student"><button>Registrar Alumno</button></a>
+    </div>
+
+    <div class="card">
+        <h2>📊 Reportes</h2>
+        <p>Revisar recaudación anual.</p>
+        <a href="/report"><button>Ver Reporte</button></a>
+    </div>
+
+</div>
+
+{% endblock %}
